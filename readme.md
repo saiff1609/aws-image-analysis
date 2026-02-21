@@ -33,13 +33,15 @@ Frontend is served via **CloudFront → S3 static bucket** over HTTPS.
 
 ## Flow
 
-**1. Pre-signed URL** — Browser requests a temporary signed upload URL from API Gateway. Lambda generates it and returns it. The image never passes through Lambda or API Gateway — this bypasses the 10MB payload limit and keeps uploads fast.
+User opens the web app served over CloudFront. They select an image and hit upload.
 
-**2. Direct Upload** — Browser uploads the image straight to S3 using the signed URL. On upload, S3 automatically triggers the processing Lambda.
+Before the image goes anywhere, the browser asks API Gateway for a pre-signed URL — a temporary, secure link that allows a direct upload to S3. Lambda generates this and returns it instantly. The image never passes through Lambda or API Gateway, which keeps uploads fast and sidesteps API Gateway's 10MB payload limit.
 
-**3. AI Processing** — Lambda calls Rekognition which returns detected labels with confidence scores. Results are written to DynamoDB against the image ID.
+The browser uploads the image straight to S3 using that signed URL. The moment the upload completes, S3 fires an event that automatically triggers the processing Lambda — no polling, no manual invocation.
 
-**4. Fetch Results** — Browser calls `/getLabels` with the image key. Lambda reads from DynamoDB and returns the labels to the UI for display.
+That Lambda calls Amazon Rekognition, which scans the image and returns detected objects with confidence scores. The results — image ID, URL, labels, confidence, status — are written to DynamoDB.
+
+The frontend then calls `/getLabels` with the image key. Lambda reads from DynamoDB and returns the label data to the UI, which displays what Rekognition found.
 
 ---
 
