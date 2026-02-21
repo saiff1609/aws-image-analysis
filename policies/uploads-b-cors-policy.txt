@@ -1,0 +1,19 @@
+[
+    {
+        "AllowedHeaders": [
+            "*"
+        ],
+        "AllowedMethods": [
+            "GET",
+            "PUT",
+            "POST",
+            "HEAD"
+        ],
+        "AllowedOrigins": [
+            "https://<url>.cloudfront.net"
+        ],
+        "ExposeHeaders": [
+            "ETag"
+        ]
+    }
+]
