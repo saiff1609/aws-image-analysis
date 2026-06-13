@@ -2,7 +2,7 @@
 
 Fully serverless image analysis on AWS. Users upload an image through a browser — Rekognition detects objects and returns labeled results with confidence scores. Zero servers managed, zero idle compute.
 
-![App Demo](screenshots/01-app-demo.png)
+![App Demo](doc/01-app-demo.png)
 
 ---
 
