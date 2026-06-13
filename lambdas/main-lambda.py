@@ -10,6 +10,11 @@ dynamodb = boto3.resource('dynamodb')
 TABLE_NAME = "image-results"
 table = dynamodb.Table(TABLE_NAME)
 
+def decimal_default(obj):
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError
+
 def lambda_handler(event, context):
     try:
         # Get bucket and object key from S3 event
@@ -20,7 +25,7 @@ def lambda_handler(event, context):
         response = rekognition.detect_labels(
             Image={'S3Object': {'Bucket': bucket, 'Name': key}},
             MaxLabels=5,
-            MinConfidence=70  # optional: filter weak matches
+            MinConfidence=70
         )
 
         # Convert float Confidence to Decimal for DynamoDB
@@ -32,16 +37,16 @@ def lambda_handler(event, context):
             for label in response['Labels']
         ]
 
-        # Generate image URL (works if bucket is public or presigned later)
+        # Generate image URL
         image_url = f"https://{bucket}.s3.amazonaws.com/{key}"
 
         # Save results to DynamoDB
         table.put_item(
             Item={
-                'imageid': key,          # must match partition key
+                'imageid': key,
                 'bucket': bucket,
                 'image_url': image_url,
-                'labels': labels,        # now safe for DynamoDB
+                'labels': labels,
                 'status': 'Processed'
             }
         )
@@ -51,7 +56,7 @@ def lambda_handler(event, context):
             'body': json.dumps({
                 'message': 'Image processed successfully',
                 'labels': labels
-            })
+            }, default=decimal_default)
         }
 
     except Exception as e:
@@ -60,4 +65,3 @@ def lambda_handler(event, context):
             'statusCode': 500,
             'body': json.dumps('Error processing image')
         }
-

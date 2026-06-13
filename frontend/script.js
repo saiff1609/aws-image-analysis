@@ -3,8 +3,8 @@ const imageInput = document.getElementById("imageInput");
 const resultsList = document.getElementById("resultsList");
 
 // Lambda endpoints
-const PRESIGNED_URL_ENDPOINT = "https://4c4j1eooni.execute-api.us-east-1.amazonaws.com/getPresignedUrl";
-const FETCH_LABELS_ENDPOINT = "https://4c4j1eooni.execute-api.us-east-1.amazonaws.com/getLabels";
+const PRESIGNED_URL_ENDPOINT = "https://s1q286q66k.execute-api.ap-south-1.amazonaws.com/getPresignedUrl";
+const FETCH_LABELS_ENDPOINT = "https://s1q286q66k.execute-api.ap-south-1.amazonaws.com/getLabels";
 
 uploadBtn.addEventListener("click", () => {
   const file = imageInput.files[0];
